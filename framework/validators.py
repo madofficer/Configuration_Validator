@@ -107,10 +107,9 @@ def validate_time_out(param: str, val: str) -> bool:
 def validate_memory_value(param: str, val: str) -> bool:
     try:
         val = val.strip().lower()
-        if val.isdigit():
+        try:
             return 0 < float(val) <= 100
-
-        else:
+        except ValueError as err:
             return val in {"off", "auto"}
 
     except Exception as err:
