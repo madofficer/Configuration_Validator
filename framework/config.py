@@ -15,9 +15,3 @@ def read_config(config_path: str | None = None) -> ConfigParser:
     config.read(config_path)
     return config
 
-
-if __name__ == "__main__":
-    print(os.getenv("CONFIG_PATH"))
-    conf = read_config()
-    print(type(conf))
-    print(conf["General"])

@@ -135,3 +135,5 @@ def test_time_out_validation(valid_config, param):
 def test_memory_value_validation(valid_config, param):
     watchdog = valid_config["Watchdog"]
     assert validate_memory_value(param, watchdog[param]) == True
+
+

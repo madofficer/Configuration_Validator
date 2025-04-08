@@ -71,7 +71,7 @@ def validate_package_type(param: str, val: str) -> bool:
 
 
 def validate_locale(param: str, val: str) -> bool:
-    pattern = r"^[a-z]{2,3}(-[A-Za-z0-9]{2,3})?$"
+    pattern = r"^[a-z]{2,3}([_-][A-Z]{2,3})?(\.UTF-8)?$"
     try:
         locale_ = val.strip()
         return re.fullmatch(pattern, locale_) is not None
