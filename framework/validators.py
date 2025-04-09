@@ -71,7 +71,7 @@ def validate_package_type(param: str, val: str) -> bool:
 
 
 def validate_locale(param: str, val: str) -> bool:
-    pattern = r"^[a-z]{2,3}([_-][A-Z]{2,3})?(\.UTF-8)?$"
+    pattern = r"^[a-z]{2,3}([_\-][A-Z]{2,3})?(\.[A-Za-z0-9\-]+)?$"
     try:
         locale_ = val.strip()
         return re.fullmatch(pattern, locale_) is not None
@@ -109,7 +109,7 @@ def validate_memory_value(param: str, val: str) -> bool:
         val = val.strip().lower()
         try:
             return 0 < float(val) <= 100
-        except ValueError as err:
+        except ValueError:
             return val in {"off", "auto"}
 
     except Exception as err:
