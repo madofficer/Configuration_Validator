@@ -1,9 +1,7 @@
 import os
 from io import StringIO, BytesIO
 
-
 import pytest
-from dotenv import load_dotenv
 
 from framework.config import read_config
 from framework.exception.validation_exception import ValidationException
@@ -16,29 +14,12 @@ from framework.validators import (
     validate_locale,
     validate_time_out,
     validate_memory_value,
+    validate_config_sections,
+    validate_config_params,
 )
 
-# load_dotenv()
 
-general_fields = {
-    "ScanMemoryLimit",
-    "PackageType",
-    "ExecArgMax",
-    "AdditionalDNSLookup",
-    "CoreDumps",
-    "RevealSensitiveInfoInTraces",
-    "ExecEnvMax",
-    "MaxInotifyWatches",
-    "CoreDumpsPath",
-    "UseFanotify",
-    "KsvlaMode",
-    "MachineId",
-    "StartupTraces",
-    "MaxInotifyInstances",
-    "Locale",
-}
-
-watchdog_fields = {"ConnectTimeout", "MaxVirtualMemory", "MaxMemory", "PingInterval"}
+# valid tests on config.ini
 
 
 @pytest.fixture
@@ -46,26 +27,12 @@ def valid_config():
     return read_config()
 
 
-# valid tests on temp config.ini
+def test_required_sections(valid_config):
+    assert validate_config_sections(valid_config)
 
 
-@pytest.mark.parametrize("param", ("General", "Watchdog"))
-def test_required_sections(valid_config, param):
-    assert param in valid_config
-
-
-@pytest.mark.parametrize("param", general_fields)
-def test_general_fields(valid_config, param):
-    general = valid_config["General"]
-    assert param in general
-    assert len(general) == len(general_fields)
-
-
-@pytest.mark.parametrize("param", watchdog_fields)
-def test_watchdog_fields(valid_config, param):
-    watchdog = valid_config["Watchdog"]
-    assert param in watchdog
-    assert len(watchdog) == len(watchdog_fields)
+def test_required_params(valid_config):
+    assert validate_config_params(valid_config)
 
 
 @pytest.mark.parametrize(
@@ -113,7 +80,7 @@ def test_bool_validation(valid_config, param):
 )
 def test_path_validation(valid_config, param):
     general = valid_config["General"]
-    assert not validate_path(param, general[param])
+    assert validate_path(param, general[param])
 
 
 @pytest.mark.parametrize("param", ["MachineId"])
@@ -394,3 +361,91 @@ def test_time_out_validation_exception(param, val):
 def test_memory_value_validation_exception(param, val):
     with pytest.raises(ValidationException):
         validate_memory_value(param, val)
+
+
+# test invalid_config
+
+
+@pytest.fixture
+def invalid_config():
+    return read_config("E:\pets\KasperskyValidate\config\invalid_config.ini")
+
+
+def test_required_sections_invalid(invalid_config):
+    assert not validate_config_sections(invalid_config)
+
+
+def test_required_params_invalid(invalid_config):
+    assert not validate_config_params(invalid_config)
+
+
+@pytest.mark.parametrize(
+    "param,min_val,max_val",
+    [
+        ("ScanMemoryLimit", 1024, 8192),
+        ("ExecArgMax", 10, 100),
+        ("ExecEnvMax", 10, 100),
+        ("MaxInotifyInstances", 1024, 8192),
+    ],
+)
+def test_int_range_validation_g_invalid_(invalid_config, param, min_val, max_val):
+    general = invalid_config["General"]
+    assert not validate_int_range(param, general[param], min_val, max_val)
+
+
+@pytest.mark.parametrize("param,min_val,max_val", [("PingInterval", 100, 10_000)])
+def test_int_range_validation_wd_invalid_(invalid_config, param, min_val, max_val):
+    watchdog = invalid_config["Watchdog"]
+    assert not validate_int_range(param, watchdog[param], min_val, max_val)
+
+
+@pytest.mark.parametrize(
+    "param",
+    [
+        "AdditionalDNSLookup",
+        "CoreDumps",
+        "RevealSensitiveInfoInTraces",
+        "UseFanotify",
+        "KsvlaMode",
+        "StartupTraces",
+    ],
+)
+def test_bool_validation_invalid_(invalid_config, param):
+    general = invalid_config["General"]
+    assert not validate_bool(param, general[param])
+
+
+@pytest.mark.parametrize("param", ["CoreDumpsPath"])
+def test_path_validation_invalid_(invalid_config, param):
+    general = invalid_config["General"]
+    assert not validate_path(param, general[param])
+
+
+@pytest.mark.parametrize("param", ["MachineId"])
+def test_uuid_validation_invalid_(invalid_config, param):
+    general = invalid_config["General"]
+    assert not validate_uuid(param, general[param])
+
+
+@pytest.mark.parametrize("param", ["PackageType"])
+def test_package_type_validation_invalid_(invalid_config, param):
+    general = invalid_config["General"]
+    assert not validate_package_type(param, general[param])
+
+
+@pytest.mark.parametrize("param", ["Locale"])
+def test_locale_validation_invalid_(invalid_config, param):
+    general = invalid_config["General"]
+    assert not validate_locale(param, general[param])
+
+
+@pytest.mark.parametrize("param", ["ConnectTimeout"])
+def test_time_out_validation_invalid_(invalid_config, param):
+    watchdog = invalid_config["Watchdog"]
+    assert not validate_time_out(param, watchdog[param])
+
+
+@pytest.mark.parametrize("param", ["MaxVirtualMemory", "MaxMemory"])
+def test_memory_value_validation_(invalid_config, param):
+    watchdog = invalid_config["Watchdog"]
+    assert not validate_memory_value(param, watchdog[param])

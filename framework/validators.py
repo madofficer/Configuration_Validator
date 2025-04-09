@@ -1,9 +1,58 @@
 import os.path
 import re
+from configparser import ConfigParser
 from typing import TypeGuard
 from uuid import UUID
 
 from framework.exception.validation_exception import ValidationException
+
+REQUIRED_SECTIONS = {
+    "General": {
+        "ScanMemoryLimit",
+        "PackageType",
+        "ExecArgMax",
+        "AdditionalDNSLookup",
+        "CoreDumps",
+        "RevealSensitiveInfoInTraces",
+        "ExecEnvMax",
+        "MaxInotifyWatches",
+        "CoreDumpsPath",
+        "UseFanotify",
+        "KsvlaMode",
+        "MachineId",
+        "StartupTraces",
+        "MaxInotifyInstances",
+        "Locale",
+    },
+    "Watchdog": {
+        "ConnectTimeout",
+        "MaxVirtualMemory",
+        "MaxMemory",
+        "PingInterval",
+    },
+}
+
+# Check config structure
+
+
+def validate_config_sections(config: ConfigParser) -> TypeGuard[ConfigParser]:
+    return (
+        len(config.sections()) == len(REQUIRED_SECTIONS)
+        and set(config.sections()) == REQUIRED_SECTIONS.keys()
+    )
+
+
+def validate_config_params(config: ConfigParser) -> TypeGuard[ConfigParser]:
+    print(config.sections())
+    for section in config.sections():
+        print(set(config[section]))
+        if len(config[section]) == len(REQUIRED_SECTIONS[section]):
+            for param in REQUIRED_SECTIONS[section]:
+                if param not in config[section]:
+                    return False
+        else:
+            return False
+    return True
 
 
 # General
