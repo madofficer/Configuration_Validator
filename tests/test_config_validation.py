@@ -18,7 +18,7 @@ from framework.validators import (
     validate_memory_value,
 )
 
-load_dotenv()
+# load_dotenv()
 
 general_fields = {
     "ScanMemoryLimit",
@@ -219,9 +219,9 @@ def test_package_type_validation_invalid(param, val):
 @pytest.mark.parametrize(
     "param,val",
     [
-        ("Locale", "rus/iso8859"),
-        ("Locale", "en-US-utf8"),
-        ("Locale", "123 "),
+        ("Locale", "ru-RU.iso8859"),
+        ("Locale", "en-US"),
+        ("Locale", "ru RU"),
     ],
 )
 def test_locale_validation_invalid(param, val):

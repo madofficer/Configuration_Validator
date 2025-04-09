@@ -56,7 +56,7 @@ def validate_package_type(param: str, val: str) -> TypeGuard[str]:
 
 
 def validate_locale(param: str, val: str) -> TypeGuard[str]:
-    pattern = r"^[a-z]{2,3}([_\-][A-Z]{2,3})?(\.[A-Za-z0-9\-]+)?$"
+    pattern = r"^[a-z]{2,3}(_[A-Z]{2})(\.[A-Za-z0-9\-]+)?(@[a-z0-9]+)?$"
     try:
         locale_ = val.strip()
         return re.fullmatch(pattern, locale_) is not None
