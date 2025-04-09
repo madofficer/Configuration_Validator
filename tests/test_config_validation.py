@@ -1,5 +1,6 @@
 import os
 from io import StringIO, BytesIO
+from pathlib import Path
 
 import pytest
 
@@ -365,10 +366,14 @@ def test_memory_value_validation_exception(param, val):
 
 # test invalid_config
 
+invalid_config_path = str(
+    Path(__file__).resolve().parent.parent / "config" / "invalid_config.ini"
+)
+
 
 @pytest.fixture
 def invalid_config():
-    return read_config("E:\pets\KasperskyValidate\config\invalid_config.ini")
+    return read_config(invalid_config_path)
 
 
 def test_required_sections_invalid(invalid_config):
