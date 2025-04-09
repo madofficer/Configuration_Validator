@@ -14,4 +14,3 @@ def read_config(config_path: str | None = None) -> ConfigParser:
     config = configparser.ConfigParser()
     config.read(config_path)
     return config
-

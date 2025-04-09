@@ -4,5 +4,3 @@ class ValidationException(Exception):
         self.param = param
         self.val = val
         self.message = message
-
-

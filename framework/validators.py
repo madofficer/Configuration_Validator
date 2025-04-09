@@ -8,17 +8,14 @@ from framework.exception.validation_exception import ValidationException
 
 # General
 
+
 def validate_int_range(param: str, val, min_val: int, max_val: int) -> TypeGuard[int]:
     try:
         num = int(val.strip())
         return min_val <= num <= max_val
 
     except Exception as err:
-        raise ValidationException(
-            param,
-            val,
-            message="Something went wrong"
-        ) from err
+        raise ValidationException(param, val, message="Something went wrong") from err
 
 
 def validate_bool(param: str, val: str) -> TypeGuard[bool]:
@@ -26,11 +23,7 @@ def validate_bool(param: str, val: str) -> TypeGuard[bool]:
         return val.strip().lower() in {"true", "false", "yes", "no"}
 
     except Exception as err:
-        raise ValidationException(
-            param,
-            val,
-            message="Something went wrong"
-        ) from err
+        raise ValidationException(param, val, message="Something went wrong") from err
 
 
 def validate_path(param: str, val: str) -> TypeGuard[str]:
@@ -39,11 +32,7 @@ def validate_path(param: str, val: str) -> TypeGuard[str]:
         return os.path.isabs(path) and os.path.exists(path)
 
     except Exception as err:
-        raise ValidationException(
-            param,
-            val,
-            message="Something went wrong"
-        ) from err
+        raise ValidationException(param, val, message="Something went wrong") from err
 
 
 def validate_uuid(param: str, val: str) -> TypeGuard[UUID]:
@@ -55,11 +44,7 @@ def validate_uuid(param: str, val: str) -> TypeGuard[UUID]:
             return False
 
     except Exception as err:
-        raise ValidationException(
-            param,
-            val,
-            message="Something went wrong"
-        ) from err
+        raise ValidationException(param, val, message="Something went wrong") from err
 
 
 def validate_package_type(param: str, val: str) -> TypeGuard[str]:
@@ -67,11 +52,7 @@ def validate_package_type(param: str, val: str) -> TypeGuard[str]:
         return val.strip().lower() in {"rpm", "deb"}
 
     except Exception as err:
-        raise ValidationException(
-            param,
-            val,
-            message="Something went wrong"
-        ) from err
+        raise ValidationException(param, val, message="Something went wrong") from err
 
 
 def validate_locale(param: str, val: str) -> TypeGuard[str]:
@@ -81,31 +62,21 @@ def validate_locale(param: str, val: str) -> TypeGuard[str]:
         return re.fullmatch(pattern, locale_) is not None
 
     except Exception as err:
-        raise ValidationException(
-            param,
-            val,
-            message="Something went wrong"
-        ) from err
+        raise ValidationException(param, val, message="Something went wrong") from err
 
 
 # Watchdog
 
+
 def validate_time_out(param: str, val: str) -> TypeGuard[str]:
     try:
-        time_out = val.replace(' ', '').lower()
-        return (time_out.endswith("m")
-                and validate_int_range(param,
-                                       time_out[:-1],
-                                       1,
-                                       120)
-                )
+        time_out = val.replace(" ", "").lower()
+        return time_out.endswith("m") and validate_int_range(
+            param, time_out[:-1], 1, 120
+        )
 
     except Exception as err:
-        raise ValidationException(
-            param,
-            val,
-            message="Something went wrong"
-        ) from err
+        raise ValidationException(param, val, message="Something went wrong") from err
 
 
 def validate_memory_value(param: str, val: str) -> TypeGuard[str | float]:
@@ -117,8 +88,4 @@ def validate_memory_value(param: str, val: str) -> TypeGuard[str | float]:
             return val in {"off", "auto"}
 
     except Exception as err:
-        raise ValidationException(
-            param,
-            val,
-            message="Something went wrong"
-        ) from err
+        raise ValidationException(param, val, message="Something went wrong") from err
