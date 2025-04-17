@@ -1,5 +1,5 @@
-# Kaspersky_Validator
-tests and validation for config 
+# Configuration_Validator
+**Kaspersky Onboarding Task**
 
 ## Быстрый Старт
 1. Распакуйте проект
