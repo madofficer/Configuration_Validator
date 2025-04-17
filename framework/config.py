@@ -1,15 +1,16 @@
+import os
 import configparser
 from configparser import ConfigParser
 
+DEFAULT_CONFIG_PATH = "/var/opt/kaspersky/config.ini"
+
 
 def read_config(config_path: str | None = None) -> ConfigParser:
-    config_path = config_path if config_path is not None else "/var/opt/kaspersky/config.ini"
+    if config_path is None:
+
+        config_path = os.getenv("CONFIG_PATH", DEFAULT_CONFIG_PATH)
+
+    print(f"config path: {config_path}")
     config = configparser.ConfigParser()
     config.read(config_path)
     return config
-
-
-if __name__ == "__main__":
-    conf = read_config(r"E:\pets\KasperskyValidate\config\config.ini")
-    print(type(conf))
-    print(conf["General"])
